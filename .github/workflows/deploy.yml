@@ -44,14 +44,17 @@ jobs:
             echo "Pulling latest code..."
             git pull origin master
 
+            echo "Cleaning old build..."
+            rm -rf dist
+
             echo "Installing dependencies..."
-            npm install
+            npm ci
 
             echo "Building project..."
             npm run build
 
-            echo "Restarting PM2..."
-            pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
+            echo "Restarting PM2 (zero-downtime)..."
+            pm2 reload ecosystem.config.cjs --update-env || pm2 start ecosystem.config.cjs
 
             pm2 save
 
